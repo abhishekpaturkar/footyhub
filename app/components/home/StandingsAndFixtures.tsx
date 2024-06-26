@@ -1,15 +1,18 @@
 "use client"
 
-import { Standing } from "@/types"
+import { AllFixtures, Standing } from "@/types"
 import Link from "next/link"
 import { useEffect, useRef, useState } from "react"
+import FixturesByLeague from "./FixtureByLeague"
 
-export default function StandingAndFixtures({
+export default function StandingsAndFixtures({
   standingsData,
+  filteredFixtures,
 }: {
   standingsData: Standing[]
+  filteredFixtures: AllFixtures[]
 }) {
-  const menuItems = ["EPL", "La Liga", "Serie A", "Bundesliga", "Ligue 1"]
+  const menuItems = ["EPL", "La Liga", "BundesLiga", "Serie A", "Ligue 1"]
   const [activeTab, setActiveTab] = useState(0)
   const menuRef = useRef<HTMLDivElement>(null)
 
@@ -31,20 +34,20 @@ export default function StandingAndFixtures({
   }
 
   useEffect(() => {
-    const handleWheel = (e: WheelEvent) => {
-      if (e.shiftKey) {
-        e.preventDefault()
+    const handleWheel = (event: WheelEvent) => {
+      if (event.shiftKey) {
+        event.preventDefault()
       }
+    }
 
-      const container = menuRef.current
+    const container = menuRef.current
+    if (container) {
+      container.addEventListener("wheel", handleWheel, { passive: false })
+    }
+
+    return () => {
       if (container) {
-        container.addEventListener("wheel", handleWheel, { passive: false })
-      }
-
-      return () => {
-        if (container) {
-          container.removeEventListener("wheel", handleWheel)
-        }
+        container.removeEventListener("wheel", handleWheel)
       }
     }
   }, [])
@@ -52,24 +55,26 @@ export default function StandingAndFixtures({
   return (
     <div
       className="flex flex-col w-full max-w-7xl bg-gradient-to-br from-red-800/75
-                    to-red-800/20 lg:flex-row "
+                    to-red-800/20 lg:flex-row"
     >
       <div className="flex justify-center items-center lg:w-3/5 md:p-10 py-5">
         <div
-          className="lex flex-col justify-center items-center bg-gradient-to-b
+          className="flex flex-col justify-center items-center bg-gradient-to-b
                 from-black/40 w-full text-neutral-100 rounded-3xl"
         >
           <div className="w-full flex flex-col justify-center items-center">
-            <div className="p-2 font-bold">STANDINGS</div>
-            <div className="w-full flex justify-center">
+            <div className="p-2 font-bold">STANDING</div>
+            <div className="flex justify-center w-full">
               {menuItems.map((a, i) => (
                 <button
                   key={i}
-                  className={`w-full p-4 rounded-t-lg md:text-base text-xs font-bold ${
-                    i === activeTab
-                      ? "text-neutral-100"
-                      : "text-gray-700 bg-black/70"
-                  }`}
+                  className={`w-full p-4 rounded-t-lg md:text-base
+                                        text-xs font-bold
+                                        ${
+                                          i === activeTab
+                                            ? "text-neutral-100"
+                                            : "text-gray-700 bg-black/70"
+                                        }`}
                   onClick={() => handleTabClick(i)}
                 >
                   {a}
@@ -78,14 +83,19 @@ export default function StandingAndFixtures({
             </div>
             <div
               ref={menuRef}
-              className="w-full flex overflow-x-hidden snap-x scrollbar-none scroll-smooth text-xs md:text-sm"
+              className="w-full flex overflow-x-hidden snap-x scrollbar-none
+                                 scroll-smooth text-xs md:text-sm"
             >
               {standingsData.map((responseData, i) => (
                 <div
                   key={responseData.league.id}
-                  className="flex-shrink-0 w-full snap-center flex justify-center items-center"
+                  className="flex-shrink-0 w-full snap-center flex
+                                        justify-center items-center"
                 >
-                  <div className="flex flex-col justify-between p-2 w-full">
+                  <div
+                    className="flex flex-col justify-between p-2
+                                        w-full"
+                  >
                     <div className="flex w-full p-1">
                       <div className="w-1/12"></div>
                       <div className="w-3/12"></div>
@@ -105,9 +115,12 @@ export default function StandingAndFixtures({
                       <Link
                         href={`/team/${team.team.id}`}
                         key={j + team.team.name}
-                        className={`flex w-full p-1 hover:bg-red-800/50 ${
-                          j % 2 === 0 ? "bg-black/40" : ""
-                        }`}
+                        className={`flex w-full p-1 hover:bg-red-800/50
+                                                        ${
+                                                          j % 2 === 0
+                                                            ? "bg-black/40"
+                                                            : ""
+                                                        }`}
                       >
                         <div className="w-1/12 flex px-2 justify-center items-center">
                           {j + 1}
@@ -146,13 +159,15 @@ export default function StandingAndFixtures({
                             <div
                               key={char + i}
                               className={`opacity-80 w-3 h-3 m-[1px] rounded-full
-                                ${
-                                  char === "L"
-                                    ? "bg-red-500"
-                                    : char === "D"
-                                    ? "bg-gray-500"
-                                    : "bg-green-500"
-                                }`}
+                                                                        ${
+                                                                          char ===
+                                                                          "L"
+                                                                            ? "bg-red-500"
+                                                                            : char ===
+                                                                              "D"
+                                                                            ? "bg-gray-500"
+                                                                            : "bg-green-500"
+                                                                        }`}
                             ></div>
                           ))}
                         </div>
@@ -165,7 +180,33 @@ export default function StandingAndFixtures({
           </div>
         </div>
       </div>
-      <div className="flex justify-center items-center lg:w-2/5 pt-10 lg:pr-10 pb-10 lg:pl-0"></div>
+      <div className="flex justify-center items-center lg:w-2/5 pt-10 lg:pr-10 pb-10 lg:pl-0">
+        <div
+          className="flex flex-col justify-center items-center bg-gradient-to-b
+                    from-black/40 w-full text-neutral-100 rounded-3xl h-full"
+        >
+          <div className="w-full flex flex-col justify-center items-center">
+            <div className="p-2 font-bold">Upcoming Matches</div>
+            <div className="flex flex-col w-full justify-center items-center pb-5 overflow-hidden">
+              {menuItems.map((leagueName, i) => {
+                return (
+                  activeTab === i &&
+                  filteredFixtures.map((league, j) => {
+                    if (league.name === leagueName) {
+                      return (
+                        <FixturesByLeague
+                          fixturesData={league.fixtures}
+                          key={league.name + j}
+                        />
+                      )
+                    }
+                  })
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

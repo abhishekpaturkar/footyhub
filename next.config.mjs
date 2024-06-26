@@ -1,4 +1,13 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const nextConfig = {
+  reactStrictMode: true,
+  images: {
+    domains: [
+      "media-1.api-sports.io",
+      "media-2.api-sports.io",
+      "media-3.api-sports.io",
+    ],
+  },
+}
 
-export default nextConfig;
+export default nextConfig
