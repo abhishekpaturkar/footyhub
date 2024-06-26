@@ -1,7 +1,13 @@
-import Image from "next/image"
+import { Standing } from "@/types"
+import getStandings from "./utils/getStandings"
+import StandingAndFixtures from "./components/home/StandingsAndFixtures"
 
-export default function Home() {
+export default async function Home() {
+  const standingsData: Standing[] = await getStandings()
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24"></main>
+    <div className="flex flex-col w-full justify-center items-center md:p-10">
+      <StandingAndFixtures standingsData={standingsData} />
+    </div>
   )
 }

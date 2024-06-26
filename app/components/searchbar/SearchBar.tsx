@@ -1,7 +1,8 @@
 import React from "react"
 import SearchBarForm from "./SearchBarForm"
 import { Team } from "@/types"
-import getTeams from "../utils/getTeams"
+import getTeams from "@/app/utils/getTeams"
+import Image from "next/image"
 
 export default async function SearchBar() {
   let teamsData: Team[] = await getTeams()
@@ -10,10 +11,12 @@ export default async function SearchBar() {
     <div className="flex justify-center items-center w-full p-3 bg-black/40">
       <div className="w-1/6 flex justify-center items-center text-neutral-100">
         <a href={"/"} className="flex justify-center items-center">
-          <img
+          <Image
             src="/logo.png"
             alt="logo"
-            className="w-10 object-cover rounded-full"
+            width={40}
+            height={40}
+            className="object-cover rounded-full"
           />
           <div className="px-2 md:block hidden font-bold text-xl">FootyHub</div>
         </a>
